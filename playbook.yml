@@ -1,0 +1,33 @@
+# user
+# public key
+# ruby-install version
+# ruby version
+# prefix
+---
+- hosts: all
+  tasks:
+
+  - name: Create user
+    user:
+      name: foo
+
+  - name: Set authorized key took from file
+    authorized_key:
+      user: foo
+      state: present
+      key: "{{ lookup('file', playbook_dir + '/id_rsa.pub') }}"
+
+  # https://www.softwarecollections.org/en/scls/rhscl/rh-ruby24/
+  - name: Install a package with repository for your system
+    yum:
+      name: centos-release-scl
+
+  - name: Install ruby
+    yum:
+      name: rh-ruby24
+
+  - name: Source rh-ruby24 in bashrc
+    lineinfile:
+      dest: /home/foo/.bashrc
+      line: . /opt/rh/rh-ruby24/enable
+      owner: foo
